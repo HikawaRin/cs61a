@@ -1,5 +1,5 @@
 from operator import add, mul
-
+from functools import reduce
 square = lambda x: x * x
 
 identity = lambda x: x
@@ -31,7 +31,7 @@ def product(n, term):
     >>> product(3, triple)    # 1*3 * 2*3 * 3*3
     162
     """
-    "*** YOUR CODE HERE ***"
+    return reduce(lambda a, b : a*b, list(map(term, [i for i in range(1, n+1)])))
 
 
 def accumulate(merger, start, n, term):
@@ -58,7 +58,8 @@ def accumulate(merger, start, n, term):
     >>> accumulate(lambda x, y: (x + y) % 17, 19, 20, square)
     16
     """
-    "*** YOUR CODE HERE ***"
+    s = [start] + [term(i) for i in range(1, n+1)]
+    return reduce(merger, s) 
 
 
 def summation_using_accumulate(n, term):
@@ -75,7 +76,7 @@ def summation_using_accumulate(n, term):
     >>> [type(x).__name__ for x in ast.parse(inspect.getsource(summation_using_accumulate)).body[0].body]
     ['Expr', 'Return']
     """
-    "*** YOUR CODE HERE ***"
+    return accumulate(add, 0, n, term)
 
 
 def product_using_accumulate(n, term):
@@ -92,7 +93,7 @@ def product_using_accumulate(n, term):
     >>> [type(x).__name__ for x in ast.parse(inspect.getsource(product_using_accumulate)).body[0].body]
     ['Expr', 'Return']
     """
-    "*** YOUR CODE HERE ***"
+    return accumulate(mul, 1, n, term)
 
 
 def filtered_accumulate(merger, start, cond, n, term):
@@ -119,7 +120,9 @@ def filtered_accumulate(merger, start, cond, n, term):
     True
     """
     def merge_if(x, y):
-        "*** YOUR CODE HERE ***"
+        if (cond(y)):
+            x = merger(x, y) 
+        return x
     return accumulate(merge_if, start, n, term)
 
 
@@ -153,4 +156,11 @@ def funception(func_a, start):
     >>> func_b5 = funception(func_a, -1)
     >>> func_b5(4)    # Returns None since start < 0
     """
-    "*** YOUR CODE HERE ***"
+    def f(stop):
+        if start < 0:
+            return None
+        elif start > stop:
+            return func_a(start)
+        else:
+            return reduce(mul, [func_a(i) for i in range(start, stop)])
+    return f
