@@ -30,7 +30,15 @@ def pick(paragraphs, select, k):
     ''
     """
     # BEGIN PROBLEM 1
-    "*** YOUR CODE HERE ***"
+    res = ''
+    for para in paragraphs:
+        if select(para):
+            if k == 0:
+                res = para
+                break
+            k -= 1
+
+    return res
     # END PROBLEM 1
 
 
@@ -49,7 +57,14 @@ def about(topic):
     """
     assert all([lower(x) == x for x in topic]), 'topics should be lowercase.'
     # BEGIN PROBLEM 2
-    "*** YOUR CODE HERE ***"
+    topics = topic
+    def check(para):
+        params = [p.lower() for p in split(remove_punctuation(para))]
+        for p in params:
+            if p in topics:
+                return True
+        return False
+    return check
     # END PROBLEM 2
 
 
@@ -79,7 +94,15 @@ def accuracy(typed, reference):
     typed_words = split(typed)
     reference_words = split(reference)
     # BEGIN PROBLEM 3
-    "*** YOUR CODE HERE ***"
+    if (len(typed_words) == 0 and len(reference_words) == 0):
+        return 100.0
+    if (len(typed_words) == 0 or len(reference_words) == 0):
+        return 0.0
+    cnt = 0
+    for i in range(min(len(typed_words), len(reference_words))):
+        if (typed_words[i] == reference_words[i]):
+            cnt += 1
+    return cnt * 100.0 / len(typed_words)
     # END PROBLEM 3
 
 
@@ -97,7 +120,10 @@ def wpm(typed, elapsed):
     """
     assert elapsed > 0, 'Elapsed time must be positive'
     # BEGIN PROBLEM 4
-    "*** YOUR CODE HERE ***"
+    average_word_len = 5
+    sec_per_min = 60
+
+    return (len(typed) * sec_per_min) / (average_word_len * elapsed)
     # END PROBLEM 4
 
 
@@ -124,7 +150,16 @@ def autocorrect(typed_word, word_list, diff_function, limit):
     'testing'
     """
     # BEGIN PROBLEM 5
-    "*** YOUR CODE HERE ***"
+    res, res_diff = typed_word, (limit + 1)
+    for pattern in word_list:
+        diff = diff_function(typed_word, pattern, limit)
+        if typed_word == pattern:
+            return typed_word
+        if diff < res_diff:
+            res, res_diff = pattern, diff
+    if res_diff > limit:
+        return typed_word
+    return res
     # END PROBLEM 5
 
 
@@ -151,7 +186,14 @@ def feline_fixes(typed, reference, limit):
     5
     """
     # BEGIN PROBLEM 6
-    assert False, 'Remove this line'
+    def check(t, r, limit, diff):
+        if len(t) == 0 or len(r) == 0:
+            return diff + abs(len(t) - len(r))
+        if diff > limit:
+            return diff
+        diff += 1 if t[0] != r[0] else 0
+        return check(t[1:], r[1:], limit, diff)
+    return check(typed, reference, limit, 0)
     # END PROBLEM 6
 
 
@@ -174,7 +216,19 @@ def hidden_kittens(typed, reference, limit):
     True
     """
     # BEGIN PROBLEM 7
-    "*** YOUR CODE HERE ***"
+    def recur(cnt, t, p, limit):
+        if len(t) == 0 or len(p) == 0 or cnt > limit:
+            return cnt
+        if len(p) == 1 and t[0] == p:
+            cnt += 1
+
+        cnt = recur(cnt, t[1:], p, limit)
+        if t[0] == p[0]:
+            cnt = recur(cnt, t[1:], p[1:], limit)
+
+        return cnt
+    res = recur(0, typed, reference, limit)
+    return res if res > 0 else limit+1
     # END PROBLEM 7
 
 
@@ -216,7 +270,15 @@ def report_progress(typed, prompt, user_id, upload):
     0.2
     """
     # BEGIN PROBLEM 8
-    "*** YOUR CODE HERE ***"
+    progress = 0
+    for i in range(len(typed)):
+        if typed[i] == prompt[i]:
+            progress += 1
+        else:
+            break
+    progress /= len(prompt)
+    upload({'id': user_id, 'progress': progress})
+    print(progress)
     # END PROBLEM 8
 
 
@@ -238,7 +300,12 @@ def time_per_word(words, times_per_player):
     [[6, 3, 6, 2], [10, 6, 1, 2]]
     """
     # BEGIN PROBLEM 9
-    "*** YOUR CODE HERE ***"
+    time = [[] for _ in times_per_player]
+    print("DEBUG:", time)
+    for i in range(len(times_per_player)):
+        for j in range(len(times_per_player[i])-1):
+            time[i].append(times_per_player[i][j+1] - times_per_player[i][j]) 
+    return match(words, time)
     # END PROBLEM 9
 
 
@@ -260,7 +327,14 @@ def fastest_words(match):
     player_indices = range(len(match["times"]))  # contains an *index* for each player
     word_indices = range(len(match["words"]))    # contains an *index* for each word
     # BEGIN PROBLEM 10
-    "*** YOUR CODE HERE ***"
+    res = [[] for _ in match['times']]
+    for i in range(len(match['words'])):
+        index = 0
+        for p in range(len(match['times'])):
+            if match['times'][p][i] < match['times'][index][i]:
+                index = p
+        res[index].append(match['words'][i])
+    print(res)
     # END PROBLEM 10
 
 
