@@ -52,7 +52,10 @@ class Account:
     def time_to_retire(self, amount):
         """Return the number of years until balance would grow to amount."""
         assert self.balance > 0 and amount > 0 and self.interest > 0
-        "*** YOUR CODE HERE ***"
+        gain, cnt = self.balance, 0
+        while gain < amount:
+            gain, cnt = gain + gain*self.interest, cnt+1
+        return cnt
 
 
 class FreeChecking(Account):
@@ -81,7 +84,18 @@ class FreeChecking(Account):
     withdraw_fee = 1
     free_withdrawals = 2
 
-    "*** YOUR CODE HERE ***"
+    def __init__(self, account_holder):
+        super().__init__(account_holder)     
+
+    def withdraw(self, funds):
+        if self.free_withdrawals > 0:
+            self.free_withdrawals -= 1 
+        else:
+            funds = funds + self.withdraw_fee
+        if funds > self.balance:
+            return 'Insufficient funds'
+        self.balance -= funds
+        return self.balance
 
 
 def ordered_digits(x):
@@ -103,7 +117,11 @@ def ordered_digits(x):
     False
 
     """
-    "*** YOUR CODE HERE ***"
+    if x < 10:
+        return True
+    x, back = x // 10, x % 10
+    x, front = x // 10, x % 10
+    return (back >= front) and ordered_digits(x)
 
 
 def get_k_run_starter(n, k):
@@ -127,12 +145,14 @@ def get_k_run_starter(n, k):
     """
     i = 0
     final = None
-    while ____________________________:
-        while ____________________________:
-            ____________________________
-        final = ____________________________
-        i = ____________________________
-        n = ____________________________
+    a, n = n % 10, n // 10
+    while a > 0 and i <= k:
+        b = (1<<31) 
+        while a > 0 and a < b:
+           b = a
+           a, n = n % 10, n // 10 
+        final = b
+        i = i + 1
     return final
 
 
@@ -151,8 +171,17 @@ def make_repeater(func, n):
     >>> make_repeater(square, 0)(5) # Yes, it makes sense to apply the function zero times!
     5
     """
-    "*** YOUR CODE HERE ***"
-
+    def repeat(x):
+        if n == 0:
+            return x
+        cnt = n-1
+        tmp = func
+        while cnt:
+            tmp = composer(func, tmp)
+            cnt -= 1
+        return tmp(x)
+    return repeat
+    
 
 def composer(func1, func2):
     """Return a function f, such that f(x) = func1(func2(x))."""
@@ -169,7 +198,9 @@ def apply_twice(func):
     >>> apply_twice(square)(2)
     16
     """
-    "*** YOUR CODE HERE ***"
+    def twice(x):
+        return composer(func, func)(x)
+    return twice
 
 
 def add_chars(w1, w2):
@@ -198,7 +229,13 @@ def add_chars(w1, w2):
     ...       ['For', 'While', 'Set', 'SetComp']) # Must use recursion
     True
     """
-    "*** YOUR CODE HERE ***"
+    if w1 == "":
+        return w2
+    elif w1 == w2:
+        return ""
+    elif w1[0] == w2[0]:
+        return add_chars(w1[1:], w2[1:])
+    return w2[0:1] + add_chars(w1, w2[1:])
 
 
 def replace_all(d, x, y):
@@ -208,4 +245,6 @@ def replace_all(d, x, y):
     >>> d == {3: '3', 'foo': 2, 'bar': 'poof', 'garply': 'poof', 'xyzzy': 99}
     True
     """
-    "*** YOUR CODE HERE ***"
+    for key in d:
+        if d[key] == x:
+            d[key] = y
