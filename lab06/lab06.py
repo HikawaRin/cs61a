@@ -18,7 +18,13 @@ def count_occurrences(t, n, x):
     >>> count_occurrences(s2, 6, 6)
     2
     """
-    "*** YOUR CODE HERE ***"
+    it = iter(t)
+    cnt = 0
+    while n != 0:
+        if (next(it) == x):
+            cnt += 1
+        n -= 1
+    return cnt
 
 
 def scale(it, multiplier):
@@ -34,7 +40,8 @@ def scale(it, multiplier):
     >>> [next(m) for _ in range(5)]
     [2, 4, 6, 8, 10]
     """
-    "*** YOUR CODE HERE ***"
+    for n in it:
+        yield n * multiplier
 
 
 def hailstone(n):
@@ -50,4 +57,10 @@ def hailstone(n):
     2
     1
     """
-    "*** YOUR CODE HERE ***"
+    while n != 1:
+        yield n
+        if n % 2:
+            n = n*3 + 1
+        else:
+            n = n // 2
+    yield n
