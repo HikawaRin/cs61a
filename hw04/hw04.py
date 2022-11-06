@@ -21,7 +21,15 @@ def merge(lst1, lst2):
     >>> merge([2, 3, 4], [2, 4, 6])
     [2, 2, 3, 4, 4, 6]
     """
-    "*** YOUR CODE HERE ***"
+    if len(lst1) == 0:
+        return lst2
+    if len(lst2) == 0:
+        return lst1
+    
+    if lst1[0] < lst2[0]:
+        return lst1[0:1] + merge(lst1[1:], lst2)
+    else:
+        return lst2[0:1] + merge(lst1, lst2[1:])
 
 
 def remove_odd_indices(lst, odd):
@@ -48,7 +56,11 @@ def remove_odd_indices(lst, odd):
     ...       ['While', 'For'])
     True
     """
-    "*** YOUR CODE HERE ***"
+    if len(lst) == 0:
+        return lst 
+    if odd:
+        return lst[0:1] + remove_odd_indices(lst[1:], not odd)
+    return remove_odd_indices(lst[1:], not odd)
 
 
 class SmartFridge:
@@ -74,10 +86,18 @@ class SmartFridge:
         self.items = {}
 
     def add_item(self, item, quantity):
-        "*** YOUR CODE HERE ***"
+        if item in self.items:
+            self.items[item] += quantity
+        else:
+            self.items[item] = quantity
+        return (f'I now have {self.items[item]} {item}')
 
     def use_item(self, item, quantity):
-        "*** YOUR CODE HERE ***"
+        self.items[item] -= min(self.items[item], quantity)
+        if (self.items[item] > 0):
+            return (f'I have {self.items[item]} {item} left')
+        else:
+            return (f'Oh no, we need more {item}!')
 
 
 class VendingMachine:
@@ -117,4 +137,35 @@ class VendingMachine:
     >>> w.vend()
     'Here is your soda.'
     """
-    "*** YOUR CODE HERE ***"
+    def __init__(self, item, price):
+        self.item = (item, price)
+        self.stock = 0
+        self.change = 0
+
+    def add_funds(self, money):
+        self.change += money
+        if self.stock == 0:
+            money = self.change
+            self.change = 0
+            return (f'Nothing left to vend. Please restock. Here is your ${money}.')
+        else:
+            return (f'Current balance: ${self.change}')
+    
+    def vend(self):
+        if self.stock == 0:
+            return 'Nothing left to vend. Please restock.'
+
+        if self.change < self.item[1]:
+            return (f'Please update your balance with ${self.item[1] - self.change} more funds.')
+        else:
+            self.stock -= 1
+            money = self.change - self.item[1]
+            self.change = 0
+            if money > 0:
+                return (f'Here is your {self.item[0]} and ${money} change.')
+            else:
+                return (f'Here is your {self.item[0]}.')
+
+    def restock(self, num):
+        self.stock += num
+        return (f'Current {self.item[0]} stock: {self.stock}')
