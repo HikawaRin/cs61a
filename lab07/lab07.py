@@ -14,7 +14,14 @@ def store_digits(n):
     >>> print("Do not use str or reversed!") if any([r in cleaned for r in ["str", "reversed"]]) else None
     >>> link1 = Link(3, Link(Link(4), Link(5, Link(6))))
     """
-    "*** YOUR CODE HERE ***"
+    if n < 10:
+        return Link(n)
+    pn = store_digits(n // 10)
+    it = pn
+    while it.rest != Link.empty:
+        it = it.rest
+    it.rest = Link(n % 10)
+    return pn
 
 
 def every_other(s):
@@ -34,7 +41,10 @@ def every_other(s):
     >>> singleton
     Link(4)
     """
-    "*** YOUR CODE HERE ***"
+    if s == Link.empty or s.rest == Link.empty:
+        return
+    every_other(s.rest.rest)
+    s.rest = s.rest.rest
 
 
 def cumulative_mul(t):
@@ -50,7 +60,11 @@ def cumulative_mul(t):
     >>> otherTree
     Tree(5040, [Tree(60, [Tree(3), Tree(4), Tree(5)]), Tree(42, [Tree(7)])])
     """
-    "*** YOUR CODE HERE ***"
+    if len(t.branches) == 0:
+        return
+    list(map(lambda b : cumulative_mul(b), t.branches))
+    for b in t.branches:
+        t.label *= b.label
 
 
 def has_cycle(link):
@@ -67,8 +81,17 @@ def has_cycle(link):
     >>> has_cycle(u)
     False
     """
-    "*** YOUR CODE HERE ***"
-
+    fit, sit = link, link
+    while fit != Link.empty:
+        fit = fit.rest
+        if fit == Link.empty:
+            break
+        fit = fit.rest
+        sit = sit.rest
+        if fit == sit:
+            return True
+        print("DEBUG: ", fit.first, sit.first)
+    return False
 
 def has_cycle_constant(link):
     """Return whether link contains a cycle.
@@ -81,7 +104,7 @@ def has_cycle_constant(link):
     >>> has_cycle_constant(t)
     False
     """
-    "*** YOUR CODE HERE ***"
+    return has_cycle(link)
 
 
 class Link:
