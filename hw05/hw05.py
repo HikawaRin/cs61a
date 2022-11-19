@@ -56,7 +56,11 @@ def add_d_leaves(t, v):
           10
         10
     """
-    "*** YOUR CODE HERE ***"
+    def helper(deep, node, v):
+      for b in node.branches:
+        helper(deep+1, b, v)
+      node.branches += [Tree(v) for _ in range(deep)]
+    helper(0, t, v)
 
 
 def has_path(t, target):
@@ -90,7 +94,13 @@ def has_path(t, target):
     False
     """
     assert len(target) > 0, 'no path for empty target.'
-    "*** YOUR CODE HERE ***"
+    if target[0] == t.label:
+        if len(target) == 1:
+            return True
+        for b in t.branches:
+            if has_path(b, target[1:]):
+              return True
+    return False
 
 
 def duplicate_link(lnk, val):
@@ -112,7 +122,15 @@ def duplicate_link(lnk, val):
     >>> z
     Link(1, Link(2, Link(2, Link(2, Link(2, Link(3))))))
     """
-    "*** YOUR CODE HERE ***"
+    def insert(node, val):
+        n = Link(val, node.rest)
+        node.rest = n
+
+    if lnk is Link.empty:
+        return
+    duplicate_link(lnk.rest, val)
+    if lnk.first == val:
+        insert(lnk, val)
 
 
 def deep_map(f, link):
@@ -128,7 +146,11 @@ def deep_map(f, link):
     >>> print(deep_map(lambda x: 2 * x, Link(s, Link(Link(Link(5))))))
     <<2 <4 6> 8> <<10>>>
     """
-    "*** YOUR CODE HERE ***"
+    if link is Link.empty:
+        return Link.empty
+    if isinstance(link.first, Link):
+        return Link(deep_map(f, link.first), deep_map(f, link.rest)) 
+    return Link(f(link.first), deep_map(f, link.rest)) 
 
 
 class Tree:
