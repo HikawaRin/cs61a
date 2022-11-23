@@ -105,7 +105,8 @@ def do_if_form(expressions, env):
     if is_scheme_true(scheme_eval(expressions.first, env)):
         return scheme_eval(expressions.rest.first, env)
     elif len(expressions) == 3:
-        return scheme_eval(expressions.rest.rest.first, env)
+        # The else part, a tail expression
+        return scheme_eval(expressions.rest.rest.first, env, True)
 
 
 def do_and_form(expressions, env):
@@ -126,7 +127,7 @@ def do_and_form(expressions, env):
     if expressions is nil:
         return True
 
-    res = scheme_eval(expressions.first, env)
+    res = scheme_eval(expressions.first, env, (True if expressions.rest is nil else False))
     if is_scheme_true(res) and expressions.rest is not nil:
         return do_and_form(expressions.rest, env)
     return res
@@ -151,7 +152,7 @@ def do_or_form(expressions, env):
     if expressions is nil:
         return False
     
-    res = scheme_eval(expressions.first, env)
+    res = scheme_eval(expressions.first, env, (True if expressions.rest is nil else False))
     if is_scheme_false(res) and expressions.rest is not nil: 
         return do_or_form(expressions.rest, env)
     return res
