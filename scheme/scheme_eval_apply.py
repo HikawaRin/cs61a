@@ -90,6 +90,8 @@ def eval_all(expressions, env):
     """
     # BEGIN PROBLEM 6
     e, res = expressions, None
+    if e is nil:
+        return None
     while e.rest is not nil:
         res = scheme_eval(e.first, env)
         e = e.rest
