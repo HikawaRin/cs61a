@@ -133,3 +133,16 @@ class MuProcedure(Procedure):
     def __repr__(self):
         return 'MuProcedure({0}, {1})'.format(
             repr(self.formals), repr(self.body))
+
+class MacroProcedure(MuProcedure):
+    """A procedure defined by a macro-define expression, which is yet another mu procefure"""
+
+    def __init__(self, formals, body):
+        super().__init__(formals, body)
+
+    def __str__(self):
+        return str(Pair('Macro', Pair(self.formals, self.body)))
+
+    def __repr__(self):
+        return 'MacroProcedure({0}, {1}, {2})'.format(
+            repr(self.formals), repr(self.body), repr(self.env))

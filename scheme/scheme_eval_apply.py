@@ -59,6 +59,12 @@ def scheme_apply(procedure, args, env):
             # END PROBLEM 2
         except TypeError as err:
             raise SchemeError('incorrect number of arguments: {0}'.format(procedure))
+    elif isinstance(procedure, MacroProcedure):
+        child_env = env.make_child_frame(procedure.formals, args)
+        result = scheme_eval(eval_all(procedure.body, child_env).expr, child_env)
+        print("DEBUG: apply method", result)
+        result = scheme_eval(result, child_env)
+        return result
     elif isinstance(procedure, LambdaProcedure):
         # BEGIN PROBLEM 9
         child_env = procedure.env.make_child_frame(procedure.formals, args)
