@@ -26,10 +26,13 @@ CREATE TABLE sizes AS
 
 -- All dogs with parents ordered by decreasing height of their parent
 CREATE TABLE by_parent_height AS
-  SELECT "REPLACE THIS LINE WITH YOUR SOLUTION";
+  SELECT cd.name FROM parents AS p, dogs AS pd, dogs AS cd 
+  WHERE p.parent = pd.name AND p.child = cd.name
+  ORDER BY pd.height desc;
 
 
 -- The size of each dog
 CREATE TABLE size_of_dogs AS
-  SELECT "REPLACE THIS LINE WITH YOUR SOLUTION";
+  SELECT d.name, s.size FROM dogs AS d, sizes AS s
+  WHERE d.height > s.min AND NOT d.height > s.max;
 
